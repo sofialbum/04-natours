@@ -2,8 +2,34 @@ const Tour = require('./../models/tourModel');
 
 exports.getAllTours = async (req, res) => {
   try {
-    const tours = await Tour.find();
+    console.log(req.query);
 
+    // BUILD QUERY
+    // 1) Filtering
+    const queryObj = { ...req.query };
+    const excludedFields = ['page', 'sort', 'limit', 'fields'];
+    excludedFields.forEach((el) => delete queryObj[el]);
+
+    // 2) Advanced filtering
+    const queryStr = JSON.stringify(queryObj);
+    queryStr.replace(/()/);
+
+    // { difficulty: 'easy', duration: { $gte: 5 } }
+    // { difficulty: 'easy', duration: { gte: '5' } }
+    // gte. gt, lte, lt
+
+    const query = Tour.find(queryObj);
+
+    // EXECUTE QUERY
+    const tours = await query;
+
+    // const query = Tour.find()
+    //   .where('duration')
+    //   .equals(5)
+    //   .where('difficulty')
+    //   .equals('easy');
+
+    // SEND RESPONSE
     res.status(200).json({
       status: 'success',
       results: tours.length,
@@ -14,7 +40,7 @@ exports.getAllTours = async (req, res) => {
   } catch (err) {
     res.status(404).json({
       status: 'fail',
-      message: err
+      message: err,
     });
   }
 };
@@ -26,13 +52,13 @@ exports.getTour = async (req, res) => {
     res.status(200).json({
       status: 'success',
       data: {
-        tour,
-      },
+        tour
+      }
     });
   } catch (err) {
     res.status(404).json({
       status: 'fail',
-      message: err,
+      message: err
     });
   }
 };
@@ -47,13 +73,13 @@ exports.createTour = async (req, res) => {
     res.status(201).json({
       status: 'success',
       data: {
-        tour: newTour,
-      },
+        tour: newTour
+      }
     });
   } catch (err) {
     res.status(400).json({
       status: 'fail',
-      message: 'Invalid data sent!',
+      message: err
     });
   }
 };
@@ -62,18 +88,18 @@ exports.updateTour = async (req, res) => {
   try {
     const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
-      runValidators: true,
+      runValidators: true
     });
     res.status(200).json({
       status: 'success',
       data: {
-        tour,
-      },
+        tour
+      }
     });
   } catch (err) {
     res.status(404).json({
       status: 'fail',
-      message: err,
+      message: err
     });
   }
 };
@@ -88,7 +114,7 @@ exports.deleteTour = async (req, res) => {
   } catch (err) {
     res.status(404).json({
       status: 'fail',
-      message: err,
+      message: err
     });
   }
 };
