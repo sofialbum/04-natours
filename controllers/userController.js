@@ -11,18 +11,10 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
-// eslint-disable-next-line node/no-unsupported-features/es-syntax
-exports.getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find();
-  // SEND RESPONSE
-  res.status(200).json({
-    status: 'success',
-    results: users.length,
-    data: {
-      users
-    }
-  });
-});
+exports.getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
 
 // eslint-disable-next-line node/no-unsupported-features/es-syntax
 exports.updateMe = catchAsync(async (req, res, next) => {
@@ -63,25 +55,15 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined!'
-  });
-};
-
 exports.createUser = (req, res) => {
   res.status(500).json({
     status: 'error',
-    message: 'This route is not yet defined!'
+    message: 'This route is not defined! Please use /signup instead'
   });
 };
 
-exports.updateUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined!'
-  });
-};
-
+exports.getUser = factory.getOne(User);
+exports.getAllUsers = factory.getAll(User);
+// Do NOT update passwords with this!
+exports.updateUser = factory.updateOne(User);
 exports.deleteUser = factory.deleteOne(User);
