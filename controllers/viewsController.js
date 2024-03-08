@@ -43,10 +43,10 @@ exports.getLoginForm = (req, res) => {
   // yo lo cambio porque si no no me funciona axios con cdn.
   res
     .status(200)
-    .set(
-      'Content-Security-Policy',
-      "connect-src 'self' https://cdnjs.cloudflare.com"
-    )
+    // .set(
+    //   'Content-Security-Policy',
+    //   "connect-src 'self' https://cdnjs.cloudflare.com"
+    // )
     .render('login', {
       title: 'Log into your account'
     });
